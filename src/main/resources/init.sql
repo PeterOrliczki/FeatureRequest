@@ -1,12 +1,12 @@
 /*
     Database initialization script that runs on every web-application redeployment.
 */
-drop table IF EXISTS coupons_shops;
-drop table IF EXISTS coupons;
-drop table IF EXISTS shops;
-drop table IF EXISTS users;
+DROP TABLE IF EXISTS coupons_shops;
+DROP TABLE IF EXISTS coupons;
+DROP TABLE IF EXISTS shops;
+DROP TABLE IF EXISTS users;
 
-create TABLE users (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
@@ -14,23 +14,21 @@ create TABLE users (
 	CONSTRAINT password_not_empty CHECK (password <> '')
 );
 
-create TABLE shops (
+CREATE TABLE shops (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
 	CONSTRAINT name_not_empty CHECK (name <> '')
 );
 
-create TABLE coupons (
+CREATE TABLE coupons (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER,
     name TEXT NOT NULL,
     percentage INTEGER NOT NULL,
     CONSTRAINT name_not_empty CHECK (name <> ''),
-	CONSTRAINT percentage_between_bounds CHECK (percentage >= 0 AND percentage <= 100),
-	FOREIGN KEY (user_id) REFERENCES users(id)
+	CONSTRAINT percentage_between_bounds CHECK (percentage >= 0 AND percentage <= 100)
 );
 
-create TABLE coupons_shops (
+CREATE TABLE coupons_shops (
     coupon_id INTEGER,
     shop_id INTEGER,
     PRIMARY KEY (coupon_id, shop_id),
@@ -38,26 +36,26 @@ create TABLE coupons_shops (
     FOREIGN KEY (shop_id) REFERENCES shops(id)
 );
 
-insert into users (email, password) values
+INSERT INTO users (email, password) VALUES
 	('user1@user1', 'user1'), -- 1
 	('user2@user2', 'user2'), -- 2
 	('user2@user3', 'user3'); -- 3
 
-insert into shops (name) values
+INSERT INTO shops (name) VALUES
 	('SPAR'),   -- 1
 	('Tesco'),  -- 2
 	('Auchan'), -- 3
 	('LIDL'),   -- 4
 	('ALDI');   -- 5
 
-insert into coupons (name, percentage, user_id) values
-	('Sausage discount', 10, 1),           -- 1
-	('Bread super-sale', 50, 2),           -- 2
-	('Bread super-sale', 40, 1),           -- 3
-	('20% off from EVERYTHING!', 20, 3),   -- 4
-	('1 product for FREE!', 100, 1);       -- 5
+INSERT INTO coupons (name, percentage) VALUES
+	('Sausage discount', 10),           -- 1
+	('Bread super-sale', 50),           -- 2
+	('Bread super-sale', 40),           -- 3
+	('20% off from EVERYTHING!', 20),   -- 4
+	('1 product for FREE!', 100);       -- 5
 
-insert into coupons_shops (coupon_id, shop_id) values
+INSERT INTO coupons_shops (coupon_id, shop_id) VALUES
     (1, 1), -- 1
     (1, 2),
     (1, 3),

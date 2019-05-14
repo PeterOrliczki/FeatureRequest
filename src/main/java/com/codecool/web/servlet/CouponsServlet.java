@@ -5,7 +5,6 @@ import com.codecool.web.dao.ShopDao;
 import com.codecool.web.dao.database.DatabaseCouponDao;
 import com.codecool.web.dao.database.DatabaseShopDao;
 import com.codecool.web.model.Coupon;
-import com.codecool.web.model.User;
 import com.codecool.web.service.CouponService;
 import com.codecool.web.service.exception.ServiceException;
 import com.codecool.web.service.simple.SimpleCouponService;
@@ -14,7 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,10 +28,7 @@ public final class CouponsServlet extends AbstractServlet {
             ShopDao shopDao = new DatabaseShopDao(connection);
             CouponService couponService = new SimpleCouponService(couponDao, shopDao);
 
-            HttpSession session = req.getSession(false);
-            User user = (User) session.getAttribute("user");
-
-            List<Coupon> coupons = couponService.getCouponsByUserId(user.getId());
+            List<Coupon> coupons = couponService.getCoupons();
 
             req.setAttribute("coupons", coupons);
             req.getRequestDispatcher("coupons.jsp").forward(req, resp);
@@ -49,16 +44,12 @@ public final class CouponsServlet extends AbstractServlet {
             ShopDao shopDao = new DatabaseShopDao(connection);
             CouponService couponService = new SimpleCouponService(couponDao, shopDao);
 
-            HttpSession session = req.getSession(false);
-            User user = (User) session.getAttribute("user");
-
             String name = req.getParameter("name");
             String percentage = req.getParameter("percentage");
 
-            Coupon coupon = couponService.addCoupon(name, percentage, user.getId());
+            Coupon coupon = couponService.addCoupon(name, percentage);
 
             String info = String.format("Coupon %s with id %s has been created", coupon.getName(), coupon.getId());
-
             req.setAttribute("info", info);
         } catch (SQLException ex) {
             throw new ServletException(ex);
